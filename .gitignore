@@ -53,3 +53,5 @@ dkms.conf
 
 # debug information files
 *.dwo
+.vscode/arduino.json
+.vscode/c_cpp_properties.json
