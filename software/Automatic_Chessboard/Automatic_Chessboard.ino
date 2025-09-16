@@ -119,9 +119,9 @@ void setup() {
   Serial.println("Automated_Chessboard_V11_3_SK.ino Version");
 
   //  Electromagnet
-  	pinMode(IN1, OUTPUT);
-  	pinMode(IN2, OUTPUT);	
-	pinMode (MAGNET, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT); 
+  pinMode (MAGNET, OUTPUT);
 
   //  Motor
   pinMode (MOTOR_WHITE_STEP, OUTPUT);
@@ -130,7 +130,7 @@ void setup() {
   pinMode (MOTOR_BLACK_DIR, OUTPUT);
 
   //  Multiplexer V9 
-   pinMode (Mux_Out, INPUT_PULLUP);
+  pinMode (Mux_Out, INPUT_PULLUP);
 
 // Matrix Led
   lc.shutdown(0,false);   // Turn on matriz Led
@@ -154,7 +154,7 @@ void setup() {
     }
   }
 
-   
+  
 
    //  MicroMax
   lastH[0] = 0;
@@ -177,12 +177,12 @@ void loop() {
 
   switch (sequence) {
 
-  	case start_up:
-  	lcd_display();
-  	no_magnet_sensor_measure();
+    case start_up:
+    lcd_display();
+    no_magnet_sensor_measure();
 
  //  Set the hall initial status
-  
+    
     Read_Sensor (mux1);
     Read_Sensor (mux2);
     Read_Sensor (mux3);
@@ -191,12 +191,12 @@ void loop() {
     record_sensors();
     delay(300);
     
-  	sequence = start;
-  	break;
+    sequence = start;
+    break;
 
 
     case start:
-      lcd_display();
+    lcd_display();
       if (button(WHITE) == true) {  // HvsH Mode
         game_mode = HvsH;
         sequence = player_white;
@@ -207,13 +207,13 @@ void loop() {
       }
       break;
 
-    case calibration:
+      case calibration:
       lcd_display();
       calibrate();
       sequence = player_white;
       break;
 
-    case player_white:
+      case player_white:
       if (millis() - timer > 995) {  // Display the white player clock
         countdown();
         lcd_display();
@@ -231,14 +231,14 @@ void loop() {
             record_sensors();
             delay(300);
 
-              new_turn_countdown = true;
-              sequence = player_black;
+            new_turn_countdown = true;
+            sequence = player_black;
           } 
           else lcd_display();
         }
         else if(game_mode == HvsC) { 
           AI_HvsC();
-		      if (no_valid_move == false){
+          if (no_valid_move == false){
             //  Set the new status of the hall sensors
             // Grabo valores en la Memoria
             record_sensors();
@@ -254,9 +254,9 @@ void loop() {
           // Fue a not valid move - se corrigio a mano el tablero - puede reiniciar el juego
           // new_turn_countdown = true; // V11.3 no tendria que cambiar el turno, pues la jugada humana no fue valida (antes decia new_turn_countdown = true;)
           sequence = player_white;    // v11.3 vuelve a jugar el White, retomando la ultima posicion (antes decia sequence = player_black;) es posible no necesitar aclarar al codigo que sigue el white, pero lo dejo por mas claridad
-          }
         }
-        break;
+      }
+      break;
 
       case player_black:
         //  Game mode HvsH
@@ -271,22 +271,22 @@ void loop() {
             player_displacement();
             AI_HvsH();  // Chekc is movement is valid
             if (no_valid_move == false)
-              {
+            {
 
             //  Set the new status of the hall sensors
             // Grabo valores en la Memoria
-            record_sensors();
-            delay(300);
+              record_sensors();
+              delay(300);
 
-             new_turn_countdown = true;
-             sequence = player_white;
-              }
+              new_turn_countdown = true;
+              sequence = player_white;
+            }
             else {
               lcd_display();
               // Fue a not valid move - se corrigio a mano el tablero - puede reiniciar el juego
               // new_turn_countdown = true; // V11.3 no tendria que cambiar el turno, pues la jugada humana no fue valida (antes decia new_turn_countdown = true;)
               sequence = player_black;    // v11.3 vuelve a jugar el Black, retomando la ultima posicion (antes decia sequence = player_white;)
-              }
+            }
           }
         }
         //  Game mode HvsC
@@ -298,18 +298,18 @@ void loop() {
           
           // Verifico si la cantidad de piezas en el tablero es correcta, pues puede ser que un sensor no la haya leido // V10.3.5
           while (Pieces_on_board() == false ){  // V11.3 Mientras la cantidad de Piezas en el Tablero no sea la esperada=false. Causas: Electroiman no dejo la pieza centrada o corrio del centro otra pieza en su paso
-              
+            
                 Set_The_Board();                  // Si es false -> solucion manual. Humano coloca las piezas como deberían estar.
                 detect_movement();  // V11.3 Vuelvo a detectar los sensores y compararlos con la memoria
-            }
-          
+              }
+              
           //  Set the new status of the hall sensors
           // Grabo valores en la Memoria - Si viene de Set the Board, los vuelve a grabar - Ver de Optimizar
-            record_sensors();
-            delay(300);
-          sequence = player_white;
-        }
-        break;
+              record_sensors();
+              delay(300);
+              sequence = player_white;
+            }
+            break;
       } // Close White Player end turn?
   } // close sequence
 } // close loop
@@ -347,33 +347,33 @@ void calibrate() {
 void motor(byte direction, int speed, float distance) { 
 // for example: motor(F1_F8, SPEED_FAST, 1); 
 Last_Direction= direction; // V10.3
- int step_number = 0;  
+int step_number = 0;  
 // Set Step Number -> Calcul the distance
 
   if (distance == calibrate_speed) step_number = 1*microsteps ; // V10 borre el 4 y puse 1 para mayor presicion
- 
- else if (direction == AH_18 || direction == HA_81 || direction == AH_81 || direction == HA_18) step_number = distance * SQUARE_SIZE * DIAGONALFACTOR;  
- else step_number = distance * SQUARE_SIZE; 
+  
+  else if (direction == AH_18 || direction == HA_81 || direction == AH_81 || direction == HA_18) step_number = distance * SQUARE_SIZE * DIAGONALFACTOR;  
+  else step_number = distance * SQUARE_SIZE; 
 
 
   //  Direction of the motor rotation // V10 -> See the Excel
 
-    if (direction == H_A || direction == F1_F8 || direction == HA_18 ) {
+  if (direction == H_A || direction == F1_F8 || direction == HA_18 ) {
     digitalWrite(MOTOR_WHITE_DIR, HIGH);
-   
-    }
-    else {
-      digitalWrite(MOTOR_WHITE_DIR, LOW);
-       
-    }
-    if (direction == A_H|| direction == F1_F8 || direction == AH_18) {
-      digitalWrite(MOTOR_BLACK_DIR, HIGH);
-       
-     }
-    else {
-      digitalWrite(MOTOR_BLACK_DIR, LOW);
-        
-     }
+    
+  }
+  else {
+    digitalWrite(MOTOR_WHITE_DIR, LOW);
+    
+  }
+  if (direction == A_H|| direction == F1_F8 || direction == AH_18) {
+    digitalWrite(MOTOR_BLACK_DIR, HIGH);
+    
+  }
+  else {
+    digitalWrite(MOTOR_BLACK_DIR, LOW);
+    
+  }
 
 
 //  Active the motors // V10 -> See the Excel
@@ -386,7 +386,7 @@ Last_Direction= direction; // V10.3
     }
     if (direction == AH_81 || direction == HA_18 ) {
       digitalWrite(MOTOR_BLACK_STEP, LOW);  
-     }
+    }
     else {
       digitalWrite(MOTOR_BLACK_STEP, HIGH); 
     }
@@ -416,71 +416,71 @@ void electromagnet(boolean state)
         }
     //delay(holdTime);  // Mantén el PWM al máximo durante el tiempo especificado
   */      
-  }
-  else  
-  {
+      }
+      else  
+      {
     //delay(100);
-    digitalWrite(MAGNET, LOW);
-  }
-}
+        digitalWrite(MAGNET, LOW);
+      }
+    }
 // ***********************************  COUNTDONW
-void countdown() {
+    void countdown() {
 
   //  Set the time of the current player
-  if (new_turn_countdown == true ) {
-    new_turn_countdown = false;
-    if (sequence == player_white) {
-      second = second_white;
-      minute = minute_white;
-    }
-    else if (sequence == player_black) {
-      second = second_black;
-      minute = minute_black;
-    }
-  }
+      if (new_turn_countdown == true ) {
+        new_turn_countdown = false;
+        if (sequence == player_white) {
+          second = second_white;
+          minute = minute_white;
+        }
+        else if (sequence == player_black) {
+          second = second_black;
+          minute = minute_black;
+        }
+      }
 
   //  Countdown
-  timer = millis();
-  second = second - 1;
-  if (second < 1) {
-    second = 60;
-    minute = minute - 1;
-  }
+      timer = millis();
+      second = second - 1;
+      if (second < 1) {
+        second = 60;
+        minute = minute - 1;
+      }
 
   //  Record the white player time
-  if (sequence == player_white) {
-    second_white = second;
-    minute_white = minute;
-  }
+      if (sequence == player_white) {
+        second_white = second;
+        minute_white = minute;
+      }
   //  Record the black player time
-  else if (sequence == player_black) {
-    second_black = second;
-    minute_black = minute;
-  }
+      else if (sequence == player_black) {
+        second_black = second;
+        minute_black = minute;
+      }
 
 
 // V10.3.8 Verify if Times up. For GameOver()
-if (game_mode==HvsH){
-  if(sequence== player_white){
-    if(minute_white<0){
+      if (game_mode==HvsH){
+        if(sequence== player_white){
+          if(minute_white<0){
     Serial.println("White get out of time. Black wins!"); // Las piezas negras ganan
     lcd.setCursor(0, 0);
     lcd.print(" PLAYER BLACK   ");
     lcd.setCursor(0, 1);
     lcd.print("      WINS      ");
     for (;;); // bucle infinito para detener el Arduino
-    }
   }
-  else if(sequence== player_black){
-    if(minute_black<0){
+}
+else if(sequence== player_black){
+  if(minute_black<0){
     Serial.println("Black get out of time. White wins!"); // Las piezas blancas ganan
     lcd.setCursor(0, 0);
     lcd.print(" PLAYER WHITE   ");
     lcd.setCursor(0, 1);
     lcd.print("      WINS      ");
     for (;;); // bucle infinito para detener el Arduino
-    }
   }
+}
 }
 else if(game_mode== HvsC){
   if(sequence==player_white){
@@ -491,21 +491,21 @@ else if(game_mode== HvsC){
     lcd.setCursor(0, 1);
     lcd.print("      WINS      ");
     for (;;); // bucle infinito para detener el Arduino
-    }
   }
-  else if(sequence==player_black){
-    if(minute_black<0){
+}
+else if(sequence==player_black){
+  if(minute_black<0){
     Serial.println("Black get out of time. But I'm the Coputer so LOL"); // Las piezas blancas ganan
     
-    }
   }
+}
 }
 }
 // ***********************  BLACK PLAYER MOVEMENT
 void black_player_movement() {
 Serial.println("black_player_movement");// for debug
   //  Convert the AI characters in variables
-  
+
   /*Serial.print("lastM[0]=");     //V9.2.6
   Serial.println(lastM[0]);   //V9.2.6
   Serial.print("lastM[0]- 'a'=");     //V9.2.6
@@ -530,7 +530,7 @@ Serial.println("black_player_movement");// for debug
   int departure_coord_Letter = lastM[0] - 'a';
   int departure_coord_Number = abs(lastM[1]-'1');  // Original -'8'-1  // V9.2.6
   int arrival_coord_Letter = lastM[2] - 'a';
-  int arrival_coord_Number = abs(lastM[3]-'1');	// Original -'8'-1	// V9.2.6
+  int arrival_coord_Number = abs(lastM[3]-'1'); // Original -'8'-1  // V9.2.6
   byte displacement_X = 0;
   byte displacement_Y = 0;
 
@@ -539,13 +539,13 @@ Serial.println("black_player_movement");// for debug
   byte white_capturing = 1;
 
   if (abs(hall_sensor_status[convert_table[arrival_coord_Number]][arrival_coord_Letter]) == 1) white_capturing = 0; // v9.2.6
-   for (byte i = abs(white_capturing); i < 2; i++) {
+  for (byte i = abs(white_capturing); i < 2; i++) {
     if (i == 0) {
       displacement_X = abs(arrival_coord_Letter - trolley_coordinate_Letter);
       displacement_Y = abs(arrival_coord_Number - trolley_coordinate_Number);
 
-  Serial.println("Trolley displacement to the starting position Case Eating");
- 
+      Serial.println("Trolley displacement to the starting position Case Eating");
+      
   Serial.print("hall_sensor_status[convert_table[arrival_coord_Number]][arrival_coord_Letter]="); // V9.2.6
   Serial.println(hall_sensor_status[convert_table[arrival_coord_Number]][arrival_coord_Letter]); // V9.2.6
   Serial.print("trolley_coordinate_Letter=");     //V9.2.6
@@ -575,10 +575,10 @@ Serial.println("black_player_movement");// for debug
   // update Trolley location
   trolley_coordinate_Letter=arrival_coord_Letter; // V10.3.6
   trolley_coordinate_Number=arrival_coord_Number; // V10.3.6
-   }
-    else if (i == 1) {
-      displacement_X = abs(departure_coord_Letter - trolley_coordinate_Letter);
-      displacement_Y = abs(departure_coord_Number - trolley_coordinate_Number);
+}
+else if (i == 1) {
+  displacement_X = abs(departure_coord_Letter - trolley_coordinate_Letter);
+  displacement_Y = abs(departure_coord_Number - trolley_coordinate_Number);
 
   Serial.println("Trolley displacement to the starting position Case NO Eating");
   Serial.print("hall_sensor_status[convert_table[arrival_coord_Number]][arrival_coord_Letter]="); // V9.2.6
@@ -608,14 +608,14 @@ Serial.println("black_player_movement");// for debug
     else if (departure_coord_Letter < trolley_coordinate_Letter) motor(H_A, SPEED_FAST, displacement_X);    // V10.3.6
     if (departure_coord_Number > trolley_coordinate_Number) motor(F1_F8, SPEED_FAST, displacement_Y);       // V10.3.6
     else if (departure_coord_Number < trolley_coordinate_Number) motor(F8_F1, SPEED_FAST, displacement_Y);  // V10.3.6
-  
+    
   Serial.println("Trolley moved to the starting position Case NO Eating");                                  // V10.3.6
 
-	  }
-      if (i == 0) {
+}
+if (i == 0) {
     digitalWrite(IN1, LOW);   // LOW for white piece polarizarion
     digitalWrite(IN2, HIGH);  // HIGH for white piece polarizarion
-      
+    
   Serial.println("Piece White moving");// for debug
 
   Serial.print("trolley_coordinate_Letter=");     //V9.2.6
@@ -642,9 +642,9 @@ Serial.println("black_player_movement");// for debug
   Serial.print("displacement_Y=");      //V9.2.6
   Serial.println(displacement_Y);       //V9.2.6
 
-   
-      electromagnet(true);
-     motor(F8_F1, SPEED_SLOW, 0.5);
+  
+  electromagnet(true);
+  motor(F8_F1, SPEED_SLOW, 0.5);
       motor(H_A, SPEED_SLOW, arrival_coord_Letter + 0.75); // v11_3 Put the white piece out of the board *** You need an extra square of space on your board !!!
       electromagnet(false);
       motor(F1_F8, SPEED_FAST, 0.5);
@@ -668,7 +668,7 @@ Serial.println("black_player_movement");// for debug
     digitalWrite(IN2, LOW);  // LOW for Black piece polarizarion
 
   Serial.println("Piece Black moving");// SPK for debug
-   
+  
   Serial.print("trolley_coordinate_Letter=");     //V9.2.6
   Serial.println(trolley_coordinate_Letter);   //V9.2.6
   Serial.print("trolley_coordinate_Number=");     //V9.2.6
@@ -727,12 +727,12 @@ Serial.println("black_player_movement");// for debug
     }
   }
    //  Diagonal displacement - Bishop - Queen - *** V10_1
-    else if (displacement_X == displacement_Y) {
+  else if (displacement_X == displacement_Y) {
     if (departure_coord_Letter > arrival_coord_Letter && departure_coord_Number > arrival_coord_Number) motor(HA_81, SPEED_SLOW, displacement_X);
     else if (departure_coord_Letter > arrival_coord_Letter && departure_coord_Number < arrival_coord_Number) motor(HA_18, SPEED_SLOW, displacement_X);
     else if (departure_coord_Letter < arrival_coord_Letter && departure_coord_Number > arrival_coord_Number) motor(AH_81, SPEED_SLOW, displacement_X);
     else if (departure_coord_Letter < arrival_coord_Letter && departure_coord_Number < arrival_coord_Number) motor(AH_18, SPEED_SLOW, displacement_X);
-   
+    
   }
   //  Black Kingside castling
   else if (departure_coord_Letter == 4 && departure_coord_Number == 7 && arrival_coord_Letter == 6 && arrival_coord_Number == 7) {  
@@ -808,15 +808,15 @@ Serial.println("black_player_movement");// for debug
     else if (departure_coord_Number < arrival_coord_Number) motor(F1_F8, SPEED_SLOW, displacement_Y);
   }
    Fix_Distance();// v10.3.5 extra last black movement, for center the piece on the square
-  electromagnet(false);
+   electromagnet(false);
 
   //  Upadte the hall sensors states with the Balck move
   hall_sensor_status_memory[convert_table[departure_coord_Number]][departure_coord_Letter] = 0; // Original 1 // V9.2.6
   hall_sensor_status_memory[convert_table[arrival_coord_Number]][arrival_coord_Letter] = 1; // Original 0 // V9.2.6
   hall_sensor_status[convert_table[departure_coord_Number]][departure_coord_Letter] = 0;  // Original 1 // V9.2.6
   hall_sensor_status[convert_table[arrival_coord_Number]][arrival_coord_Letter] = 1;  // Original 0 // V9.2.6
-	
-	
+  
+  
 }
 
 
@@ -825,7 +825,7 @@ void lcd_display() {
 
    lcd.backlight(); // If Real this line not be comment // If Simulide put comment "//" at the beginig of the line
 
-  if (no_valid_move == true) {
+   if (no_valid_move == true) {
     lcd.setCursor(0, 0);
     lcd.print("  NO VALID MOVE  ");
     lcd.setCursor(0, 1);
@@ -839,7 +839,7 @@ void lcd_display() {
 
   switch (sequence) {
     case start_up:
-      lcd.setCursor(0, 0);
+    lcd.setCursor(0, 0);
       lcd.print(" 11_3 AUTOMATIC "); // V11_3 add the Number Version
       lcd.setCursor(0, 1);
       lcd.print("   CHESSBOARD   ");
@@ -850,35 +850,35 @@ void lcd_display() {
       lcd.print("  ON THE BOARD  ");
       delay(200);
       break;
-    case start:
+      case start:
       lcd.setCursor(0, 0);
       lcd.print(" PRESS W - HvsH ");  // V10.3.2
       lcd.setCursor(0, 1);
       lcd.print(" PRESS B - HvsC ");
       break;
-    case calibration:
+      case calibration:
       lcd.setCursor(0, 0);
       lcd.print("  CALIBRATION   ");
       lcd.setCursor(0, 1);
       lcd.print("                ");
       Serial.println("*** Calibration ****");
       break;
-    case player_white:
+      case player_white:
       lcd.setCursor(0, 0);
       lcd.print("     WHITE      ");
       lcd.setCursor(0, 1);
       lcd.print("     " + String(minute) + " : " + String(second) + "     ");
       Serial.println("*** White Turn ****");
       break;
-    case player_black:
+      case player_black:
       lcd.setCursor(0, 0);
       lcd.print("     BLACK      ");
       lcd.setCursor(0, 1);
       lcd.print("     " + String(minute) + " : " + String(second) + "     ");
       Serial.println("*** Black Turn ****");
       break;
+    }
   }
-}
 
 // ************************  DETECT MOVEMENT  
 void detect_movement() { // Read twice, because some times, no Detection on the First - EK V10.3.5
@@ -889,46 +889,46 @@ void detect_movement() { // Read twice, because some times, no Detection on the 
    // Reset Matrix Values V10_8_3
 
   for (int v = 0; v < 8; v++) {
-  for (int b = 0; b < 8; b++) {
-    hall_sensor_status[v][b] = 0;
-    hall_value[v][b] = 0;
+    for (int b = 0; b < 8; b++) {
+      hall_sensor_status[v][b] = 0;
+      hall_value[v][b] = 0;
+    }
   }
-}
 
   //  Record the hall switches status
  static bool first_run = true; // EK
  if(first_run){
       // Take an initial reading to stabilize the sensors  // V10.3.5
-            Read_Sensor(mux1);
-            Read_Sensor(mux2);
-            Read_Sensor(mux3);
-            Read_Sensor(mux4);
+  Read_Sensor(mux1);
+  Read_Sensor(mux2);
+  Read_Sensor(mux3);
+  Read_Sensor(mux4);
             delay(200); // Give some time for the system to stabilize
             first_run = false;  // Mark first run as complete
-    }
+          }
   // Perform regular readings
-    Read_Sensor (mux1);
-    Read_Sensor (mux2);
-    Read_Sensor (mux3);
-    Read_Sensor (mux4);
-    delay(100);
+          Read_Sensor (mux1);
+          Read_Sensor (mux2);
+          Read_Sensor (mux3);
+          Read_Sensor (mux4);
+          delay(100);
 
 
   // Comparo valores con la Memoria // la funcion compare_hall_status Define la posicion de arribo y de partida.
-  compare_hall_status();
-  delay(300);
+          compare_hall_status();
+          delay(300);
   // Muestra los valores
-    hall_display();
-    delay(300);
+          hall_display();
+          delay(300);
 
-}
+        }
 
-void Read_Sensor (HC4067 &mux) 
-{
+        void Read_Sensor (HC4067 &mux) 
+        {
 
   //  Read the hall sensor status
- 
-  multiplex = 0;
+         
+          multiplex = 0;
   mux.disable(); // Deshabilita todos los mux
 
 // Activa el mux llamado como parámetro
@@ -975,7 +975,7 @@ void read_hall_values(HC4067 &mux) { // V10_3_8 cambio lugar el delay y lo reduz
 }
 
 void Record_hall_measure_V2() {  // V11 ***
-    
+  
   if (hallMeasure <= hall_value_north_magnet[row][7-column]) {
     hall_sensor_status[row][7-column] = -1;    // revisa la polaridad de tus imanes. Aqui defini las blancas(-1)
     hall_value[row][7-column] = hallMeasure;
@@ -994,10 +994,10 @@ number_sensor_change=0;  // V9.2.7.2
 
 // first see all sensors changes
 
-  for (byte i = 0; i < 8; i++) 
+for (byte i = 0; i < 8; i++) 
+{
+  for (byte j = 0; j < 8; j++) 
   {
-    for (byte j = 0; j < 8; j++) 
-    {
       if (abs(hall_sensor_status[i][j]) != abs(hall_sensor_status_memory[i][j])) // En valor Absoluto, indistinto B&N 
       { 
         number_sensor_change++;
@@ -1007,112 +1007,112 @@ number_sensor_change=0;  // V9.2.7.2
   }
 // deppend on the number of sensor changed, normal move, eat situation, castle situation
   switch (number_sensor_change){
- 
-  case 1:
+   
+    case 1:
     // 1 Cambio en valor absoluto. única opcion se quita 1 pieza del tablero -> situacion comer normal
 
     for (byte i = 0; i < 8; i++) 
     {
-    for (byte j = 0; j < 8; j++)      
+      for (byte j = 0; j < 8; j++)      
       {
         if (hall_sensor_status[i][j] != hall_sensor_status_memory[i][j]) 
-      { 
+        { 
         if (hall_sensor_status_memory[i][j] == 1) // 1=Black piece before, So White Eat a Black piece arrival position
-         {
+        {
           hall_colone[1] = i;     //V9.2.6 // original [0]
           hall_line[1] = j;       //V9.2.6 // original [0]
-         }
+        }
         if (hall_sensor_status_memory[i][j] == -1) // -1=White piece before, so the departure position. 
-         {
+        {
           hall_colone[0] = i; //V9.2.6 // original [0]
           hall_line[0] = j;   // V9.2.6 // original [0] 
-          }
+        }
       }
     }
   }
-    break;
+  break;
 
   case 2:
     // 2 cambios en valor absoluto. unica opcion-> una pieza se mueve del tablero a una casilla vacia-> mover pieza
 
-    for (byte i = 0; i < 8; i++) 
-    {
+  for (byte i = 0; i < 8; i++) 
+  {
     for (byte j = 0; j < 8; j++)      
-      {
-        if (hall_sensor_status[i][j] != hall_sensor_status_memory[i][j]) 
+    {
+      if (hall_sensor_status[i][j] != hall_sensor_status_memory[i][j]) 
       { 
         if (hall_sensor_status_memory[i][j] == 0) // 0=no Piece before, so arrival position
-         {
+        {
           hall_colone[1] = i; // v9.2.5
           hall_line[1] = j;  
-         }
+        }
         
         if (hall_sensor_status_memory[i][j] == -1) // -1=White piece before, so the departure position. 
-         {
+        {
           hall_colone[0] = i; //V9.2.6 // original [0]
           hall_line[0] = j;   // V9.2.6 // original [0] 
-          }
+        }
       }
     }
   }
 
-    break;
+  break;
 
   case 3:
     // 3 cambios en valor absoluto. unica opcion -> 1 pieza se quita del tablero y 1 pieza se mueve a casilla vacia-> Situacion Comer al Paso
-    
-   for (byte i = 0; i < 8; i++) 
-    {
+  
+  for (byte i = 0; i < 8; i++) 
+  {
     for (byte j = 0; j < 8; j++)      
-      {
-        if (hall_sensor_status[i][j] != hall_sensor_status_memory[i][j]) 
+    {
+      if (hall_sensor_status[i][j] != hall_sensor_status_memory[i][j]) 
       { 
         if (hall_sensor_status_memory[i][j] == 0) // 0=no Piece before, so arrival position
-         {
+        {
           hall_colone[1] = i; // v9.2.5
           hall_line[1] = j;  
-         }
+        }
         if (hall_sensor_status_memory[i][j] == -1) // -1=White piece before, so the departure position. 
-         {
+        {
           hall_colone[0] = i; //V9.2.6 // original [0]
           hall_line[0] = j;   // V9.2.6 // original [0] 
-          }
+        }
       }
     }
   }
-    break;
+  break;
 
   case 4:
     // 4 cambios en valor Absoluto. unica opcion -> 2 piezas se mueven a casillas vacias -> Situacion Enroque
     // Si Torre a1 se movio entonces enroque lado dama. Si no, Enroque lado Rey.
     // Siempre sale del Rey, e1. Puede ir al c1 (lado dama) o al g1(lado Rey)
-    hall_colone[0] = 0; 
-    hall_line[0] = 4; 
+  hall_colone[0] = 0; 
+  hall_line[0] = 4; 
 
     if (hall_sensor_status[0][0] != hall_sensor_status_memory[0][0]) // verifico casilla a1
     {
-          hall_colone[1] = 0; 
-          hall_line[1] = 2;    
+      hall_colone[1] = 0; 
+      hall_line[1] = 2;    
     }
     else
     {
-          hall_colone[1] = 0; 
-          hall_line[1] = 6;  
+      hall_colone[1] = 0; 
+      hall_line[1] = 6;  
     }
 
     break;
 
-  default:
+    default:
     // Cualquier otro valor de cambio de sensores en valor absoluto(0, o mayor que 4), error
     break;
 
   }
- 
+  
 }
 
 void hall_display() {
   lc.clearDisplay(0);
- 
+  
   // hall value and matrix
   Serial.println("*** hall_value ****");
   Serial.println("+ -    -   -   -  -   -   -   -   -+");
@@ -1153,13 +1153,13 @@ void hall_display() {
 }
 void record_sensors() 
 {
-    for (byte i = 0; i < 8; i++) 
-   {
-      for (byte j = 0; j < 8; j++) 
-      {
+  for (byte i = 0; i < 8; i++) 
+  {
+    for (byte j = 0; j < 8; j++) 
+    {
       hall_sensor_status_memory[i][j] = hall_sensor_status[i][j]; // v9.2.6 switched
     }
-    }
+  }
 }
 
 // **************************  PLAYER DISPLACEMENT
@@ -1187,52 +1187,52 @@ void player_displacement() {
 // V10.3.5
 void Set_The_Board(){ // modificar para que resalte en la matriz led y en el serial los casilleros a corregir
   Serial.println("Set_The_Board called");
-	// Place manualy the pieces on place as on the Last move, before the "Bad Move" appears
-	lcd.setCursor(0, 0);
-    lcd.print("PUT PIECES AS   ");
-    lcd.setCursor(0, 1);
-    lcd.print("EXPECTD-PRESS BL");
-    Serial.println(" ");
-	Serial.print("Place the pieces on place as show on the serial monitor");
-	Serial.println(" ");
-	Serial.print("When finished, press BLACK Button");
+  // Place manualy the pieces on place as on the Last move, before the "Bad Move" appears
+  lcd.setCursor(0, 0);
+  lcd.print("PUT PIECES AS   ");
+  lcd.setCursor(0, 1);
+  lcd.print("EXPECTD-PRESS BL");
+  Serial.println(" ");
+  Serial.print("Place the pieces on place as show on the serial monitor");
+  Serial.println(" ");
+  Serial.print("When finished, press BLACK Button");
   serialBoard(); // *********** print the Board from Micro_Max
-	 while (digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH ) {
-      delay(100);
+  while (digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH ) {
+    delay(100);
   } // Here wait the White button pressed for Continue
   Serial.println(" ");
-	Serial.print("Button BLACK Pressed");
-	lcd.setCursor(0, 0);
-    lcd.print("BUTTON BLACK    ");
-    lcd.setCursor(0, 1);
-    lcd.print("PRESSED         ");
-    Serial.println(" ");
-    delay(100);
+  Serial.print("Button BLACK Pressed");
+  lcd.setCursor(0, 0);
+  lcd.print("BUTTON BLACK    ");
+  lcd.setCursor(0, 1);
+  lcd.print("PRESSED         ");
+  Serial.println(" ");
+  delay(100);
     //  Set the new status of the hall sensors
-    
+  
    // Reset Matrix, 
   // hall_value[8][8] = 0; // Reset matrix with hall values (Measures) //V10.3.5
   // hall_sensor_status[8][8] = 0; // Reset matrix with hall Status (1 or 0) //V10.3.5
    // Reset Matrix Values V10_8_3
 
-   for (int v = 0; v < 8; v++) {
-  for (int b = 0; b < 8; b++) {
-    hall_sensor_status[v][b] = 0;
-    hall_value[v][b] = 0;
+  for (int v = 0; v < 8; v++) {
+    for (int b = 0; b < 8; b++) {
+      hall_sensor_status[v][b] = 0;
+      hall_value[v][b] = 0;
+    }
   }
-}
 
   //  Read and Record the hall Sensors
  static bool first_run = true; // EK
  if(first_run){
       // Take an initial reading to stabilize the sensors  // V10.3.5
-            Read_Sensor(mux1);
-            Read_Sensor(mux2);
-            Read_Sensor(mux3);
-            Read_Sensor(mux4);
+  Read_Sensor(mux1);
+  Read_Sensor(mux2);
+  Read_Sensor(mux3);
+  Read_Sensor(mux4);
             delay(200); // Give some time for the system to stabilize
             first_run = false;  // Mark first run as complete
-    }
+          }
     // Perform regular readings
           Read_Sensor (mux1);
           Read_Sensor (mux2);
@@ -1240,17 +1240,17 @@ void Set_The_Board(){ // modificar para que resalte en la matriz led y en el ser
           Read_Sensor (mux4);
           delay(100);
 
-	hall_display();  // update Matrix Led
+  hall_display();  // update Matrix Led
 
     // hall_sensor_status returned to the value seted by user
-    Serial.println(" ");
-	Serial.print("hall_sensor_status seted by the user to the expected value");
-    lcd.setCursor(0, 0);
-    lcd.print("BOARD SETED BY  ");
-    lcd.setCursor(0, 1);
-    lcd.print("   THE USER     ");
-    Serial.println(" ");
-    delay(100);
+  Serial.println(" ");
+  Serial.print("hall_sensor_status seted by the user to the expected value");
+  lcd.setCursor(0, 0);
+  lcd.print("BOARD SETED BY  ");
+  lcd.setCursor(0, 1);
+  lcd.print("   THE USER     ");
+  Serial.println(" ");
+  delay(100);
 }
 
 // *********** Fix the Distance ****************** V10.3
@@ -1318,7 +1318,7 @@ void Fix_Distance(){
     delay(300);
     */
 
-}
+  }
 // Funcion Cantidad de piezas en el Tablero.
 // Agregar esa funcion aqui
 // Asi se marcan en la Matriz led y en el serial las posiciones del tablero a verificar
@@ -1340,34 +1340,34 @@ char b[] = {
 */
 
 bool Pieces_on_board(){
-Serial.println(" ");
-Serial.println("Pieces_on_board Called");
+  Serial.println(" ");
+  Serial.println("Pieces_on_board Called");
 
 pieces_on_micromax =0;          // reseteo el contador de piezas en Micromax
 pieces_on_hall_status =0;      // reseteo el contador de piezas en el Sensor
 
 // Cuento la cantidad de Piezas, segun Micromax
 for (int i = 0; i < 127; i++) { // recorre todo b[] menos la dummy, la ultima posicion del array que tiene un 0
-        
+  
         if (i % 16 < 8) { // i%16= resto. Por ejemplo el resto de 10/16=10 por lo tanto ignorar las posiciones invisibles de b[].
             if (b[i] != 0) { // Si hay una pieza (valor distinto de 0)
-                pieces_on_micromax++;
+              pieces_on_micromax++;
             }
+          }
         }
-    }
 // Cuento la Cantidad de Piezas, segun la lectura en los Hall Sensor
 
-for (int i = 0; i < 8; i++) {
-    for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < 8; i++) {
+          for (int j = 0; j < 8; j++) {
       if(hall_sensor_status[i][j] != 0){ // Si hay una pieza (valor distinto de 0)
-                pieces_on_hall_status++;
+        pieces_on_hall_status++;
       }
     }
   }
 
-if(pieces_on_micromax == pieces_on_hall_status)
+  if(pieces_on_micromax == pieces_on_hall_status)
   return true;
-else
+  else
   return false;
 
 }
@@ -1377,91 +1377,91 @@ else
 // ******  Funcion a ser llamada desde ino para establecer el valor inicial de cada Sensor ****
 void no_magnet_sensor_measure(){
 
-Serial.print("Instructions");
-Serial.println(" ");
-Serial.println("We are on no_magnet_sensor_measure");
+  Serial.print("Instructions");
+  Serial.println(" ");
+  Serial.println("We are on no_magnet_sensor_measure");
 
-lcd.setCursor(0, 0);
-lcd.print("Read 64 Sensors "); 
-lcd.setCursor(0, 1);
-lcd.print("   NO MAGNETS   ");
-delay(600);
-lcd.setCursor(0, 0);
-lcd.print("   PRESS ANY    "); 
-lcd.setCursor(0, 1);
-lcd.print("     BUTTON     ");
-delay(200);
+  lcd.setCursor(0, 0);
+  lcd.print("Read 64 Sensors "); 
+  lcd.setCursor(0, 1);
+  lcd.print("   NO MAGNETS   ");
+  delay(600);
+  lcd.setCursor(0, 0);
+  lcd.print("   PRESS ANY    "); 
+  lcd.setCursor(0, 1);
+  lcd.print("     BUTTON     ");
+  delay(200);
 
-switch (sequence){
+  switch (sequence){
 
-	case start_up:
-		
+    case start_up:
+    
     Serial.println("Will read the 64 Hall Sensors with no magnets on the board");
     Serial.println("The Sensors will be read twice to compare the measure of each sensor and see the difference");
     Serial.println("PRESS ANY BUTTON to continue");
     while (difference_hall>hall_error){ // difference_hall esta iniciado en un valor grande, asi que este while se ejecuta al menos 1 vez
-    Serial.println("**** Error is Bigger than acceptable, press any button for read The 64 Hall with NO Magnets on it ****");
+      Serial.println("**** Error is Bigger than acceptable, press any button for read The 64 Hall with NO Magnets on it ****");
     // Press any Button
 
-     while (digitalRead(BUTTON_WHITE_SWITCH_MOTOR_WHITE) == HIGH && digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH) {
+      while (digitalRead(BUTTON_WHITE_SWITCH_MOTOR_WHITE) == HIGH && digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH) {
       delay(100);  // Pequeña pausa para evitar sobrecargar el procesador
-     }
+    }
       //1st read
-      Read_Sensor_Setup_0 (mux1);
-      Read_Sensor_Setup_0 (mux2);
-      Read_Sensor_Setup_0 (mux3);
-      Read_Sensor_Setup_0 (mux4);
-      delay(20);
+    Read_Sensor_Setup_0 (mux1);
+    Read_Sensor_Setup_0 (mux2);
+    Read_Sensor_Setup_0 (mux3);
+    Read_Sensor_Setup_0 (mux4);
+    delay(20);
       // 2d read
-      Read_Sensor_Setup (mux1);
-      Read_Sensor_Setup (mux2);
-      Read_Sensor_Setup (mux3);
-      Read_Sensor_Setup (mux4);
-      delay(20);
+    Read_Sensor_Setup (mux1);
+    Read_Sensor_Setup (mux2);
+    Read_Sensor_Setup (mux3);
+    Read_Sensor_Setup (mux4);
+    delay(20);
 
-      Serial.println("Difference on hall_value measures");
-      Serial.println("+ -    -   -   -  -   -   -   -   -+");
-      for (int i = 7; i >= 0; i--) {
-        Serial.print(' ');
-        Serial.print(i+1);
-        Serial.print("| ");
-        for (int j = 0; j < 8; j++) {
-          hall_value_no_magnet_difference[i][j]=hall_value_no_magnet_memory[i][j]-hall_value_no_magnet[i][j];
-          Serial.print(hall_value_no_magnet_difference[i][j]);
-          
-          Serial.print(" ");
-        }
-        Serial.println('|');
+    Serial.println("Difference on hall_value measures");
+    Serial.println("+ -    -   -   -  -   -   -   -   -+");
+    for (int i = 7; i >= 0; i--) {
+      Serial.print(' ');
+      Serial.print(i+1);
+      Serial.print("| ");
+      for (int j = 0; j < 8; j++) {
+        hall_value_no_magnet_difference[i][j]=hall_value_no_magnet_memory[i][j]-hall_value_no_magnet[i][j];
+        Serial.print(hall_value_no_magnet_difference[i][j]);
+        
+        Serial.print(" ");
       }
-      Serial.println("+ -    -   -   -  -   -   -   -   -+");
-      Serial.println("     a   b   c   d   e   f   g   h");
-      
-      ordenarYMostrarMatriz(hall_value_no_magnet_difference);
-       
+      Serial.println('|');
+    }
+    Serial.println("+ -    -   -   -  -   -   -   -   -+");
+    Serial.println("     a   b   c   d   e   f   g   h");
+    
+    ordenarYMostrarMatriz(hall_value_no_magnet_difference);
+    
     } // end while
 
-  Serial.println("*** hall_value_no_magnet measured and seted ****");
-  
-  Serial.println(" ************** ");
-  Serial.println("*** hall_value_north_magnet calculated ****");
-  Serial.println("*** hall_value_south_magnet calculated ****");
-  Serial.println(" ************** ");
-  lcd.setCursor(0, 0);
-  lcd.print(" PUT  THEPIECES "); 
-  lcd.setCursor(0, 1);
-  lcd.print(" PRESS ANY KEY  ");
-  Serial.println("*** PUT THE PIECES ON BOARD ****");
-  Serial.println(" ****PRESS ANY KEY** ");
-  
-  while (digitalRead(BUTTON_WHITE_SWITCH_MOTOR_WHITE) == HIGH && digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH) {
+    Serial.println("*** hall_value_no_magnet measured and seted ****");
+    
+    Serial.println(" ************** ");
+    Serial.println("*** hall_value_north_magnet calculated ****");
+    Serial.println("*** hall_value_south_magnet calculated ****");
+    Serial.println(" ************** ");
+    lcd.setCursor(0, 0);
+    lcd.print(" PUT  THEPIECES "); 
+    lcd.setCursor(0, 1);
+    lcd.print(" PRESS ANY KEY  ");
+    Serial.println("*** PUT THE PIECES ON BOARD ****");
+    Serial.println(" ****PRESS ANY KEY** ");
+    
+    while (digitalRead(BUTTON_WHITE_SWITCH_MOTOR_WHITE) == HIGH && digitalRead(BUTTON_BLACK_SWITCH_MOTOR_BLACK) == HIGH) {
       delay(100);  // Pequeña pausa para evitar sobrecargar el procesador
-     }
-  Serial.println("*** EXIT 64 HALL SENSOR MEASURE ****");
-  Serial.println(" ********************************** ");
-  Serial.println("*** PRESS WHITE fo Human Vs Human game ****");
-  Serial.println("*** PRESS BLACK fo Human Vs Computer game ****");
+    }
+    Serial.println("*** EXIT 64 HALL SENSOR MEASURE ****");
+    Serial.println(" ********************************** ");
+    Serial.println("*** PRESS WHITE fo Human Vs Human game ****");
+    Serial.println("*** PRESS BLACK fo Human Vs Computer game ****");
 
-	break;
+    break;
 
 
 } // close switch
@@ -1469,7 +1469,7 @@ switch (sequence){
 
 } // end no_magnet_sensor_measure
 
-  void Read_Sensor_Setup (HC4067 &mux) 
+void Read_Sensor_Setup (HC4067 &mux) 
 {
 
   //  Read the hall sensor status
@@ -1509,9 +1509,9 @@ void read_hall_values_setup(HC4067 &mux) { // V10_3_8 cambio lugar el delay y lo
   for (int j = 0; j < 16; j++) {
     mux.setChannel(j);
      //delay(1); // agregado delay para esperar a que se estabilice el canal en el mux
-     
-     hallMeasure=analogRead(Mux_Out); 
-      
+    
+    hallMeasure=analogRead(Mux_Out); 
+    
     
     // delay(5); //quitado este delay entiendo que no requiere tempo luego de la lectura
 
@@ -1533,9 +1533,9 @@ void read_hall_values_setup_0(HC4067 &mux) { // V10_3_8 cambio lugar el delay y 
   for (int j = 0; j < 16; j++) {
     mux.setChannel(j);
      //delay(1); // agregado delay para esperar a que se estabilice el canal en el mux
-     
-     hallMeasure=analogRead(Mux_Out); 
-      
+    
+    hallMeasure=analogRead(Mux_Out); 
+    
     
     // delay(5); //quitado este delay entiendo que no requiere tempo luego de la lectura
 
@@ -1618,14 +1618,14 @@ void ordenarYMostrarMatriz(int matriz[8][8]) {
 
 // Paso 4: Muestro el Maximo y Minimo valor del Arreglo
 
-	
-	  Serial.print("Valor máximo: ");
-	  Serial.println(valores[0]);
-   difference_hall=valores[0];
-	  Serial.print("Valor mínimo: ");
-	  Serial.println(valores[63]);
-	  Serial.print("Diferencia entre extremos: ");
-   
-	  Serial.println(valores[0]-valores[63]);
+  
+  Serial.print("Valor máximo: ");
+  Serial.println(valores[0]);
+  difference_hall=valores[0];
+  Serial.print("Valor mínimo: ");
+  Serial.println(valores[63]);
+  Serial.print("Diferencia entre extremos: ");
+  
+  Serial.println(valores[0]-valores[63]);
 
 }

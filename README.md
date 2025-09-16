@@ -12,17 +12,21 @@ Our goal is to deliver a high-quality, affordable, and customizable chessboard t
 ## Repository Structure
 ```
 chessboard/
-├── docs/            # Technical documentation, diagrams, specs
-├── hardware/        # Arduino firmware and schematics
-│   ├── firmware/    # .ino files for motors, sensors, etc.
-│   └── schematics/  # Circuit diagrams, Fritzing/KiCad files
-├── software/        # Game logic and orchestration
-│   ├── engine/      # Move validation, AI opponent
-│   ├── interface/   # Human interaction (CLI, GUI, etc.)
-│   └── controller/  # Coordination between hardware and engine
-├── tests/           # Unit and integration tests
-├── scripts/         # Utilities for setup, simulation, debugging
-└── README.md        # Project overview
+├── docs/                      # Technical documentation and specifications
+├── hardware/                  # Hardware-related files and firmware
+│   ├── firmware/             # Arduino code and related files
+│   └── schematics/          # Electronic diagrams and PCB designs
+├── software/                 # Core software components
+│   ├── engine/              # Chess engine (Micro_Max) and game logic
+│   ├── sensors/             # Hall effect sensors management
+│   ├── motion/              # Motors and electromagnet control
+│   ├── interface/           # User interface (LCD display, buttons)
+│   └── controller/          # Main system orchestration
+├── tests/                    # Testing infrastructure
+│   ├── unit/               # Unit tests for individual components
+│   └── integration/        # End-to-end system tests
+├── scripts/                  # Utility scripts and tools
+└── README.md                # Project documentation
 ```
 --
 ## 🧪 Dependencies
