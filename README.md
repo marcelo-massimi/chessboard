@@ -29,7 +29,7 @@ chessboard/
 └── README.md                # Project documentation
 ```
 --
-## 🧪 Dependencies
+## 🧪 Dependencies and more
 - Arduino IDE
 - Arduino libraries:
   - Wire
