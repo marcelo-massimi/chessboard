@@ -107,6 +107,26 @@ graph TD
     C -->|Updates| A
     B -->|Positions| A
     E[LCD Display] -->|Shows| A
+    
+    %% Electromagnet System
+    F[Electromagnet] -->|Piece Status| A
+    A -->|ON/OFF Commands| F
+    F -->|Grab/Release| G[Chess Pieces]
+    B -->|Position| F
+    
+    %% Subcomponents and States
+    subgraph Electromagnet Control
+        F
+        H[Power Control]
+        I[State Monitor]
+    end
+    
+    H -->|Power Level| F
+    I -->|Active/Inactive| F
+    
+    %% Additional Interactions
+    C -->|Piece Detection| F
+    F -->|Magnetic Field| C
 ```
 
 ## Dependencies
