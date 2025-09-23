@@ -80,6 +80,7 @@ sequenceDiagram
     participant Sensors
     participant Engine
     participant Motors
+    participant Electromagnet
 
     Player->>Board: Make Move
     Board->>Sensors: detect_movement()
@@ -88,10 +89,32 @@ sequenceDiagram
     Engine-->>Board: Move valid/invalid
     
     alt Valid Move
-        Board->>Motors: move_trolley()
-        Motors-->>Board: Movement complete
+        alt Capture Move
+            Board->>Motors: move_to_capture_position()
+            Motors-->>Board: Position reached
+            Board->>Electromagnet: activate()
+            Board->>Motors: move_to_graveyard()
+            Motors-->>Board: At graveyard
+            Board->>Electromagnet: deactivate()
+        end
+        
+        Board->>Motors: move_to_origin()
+        Motors-->>Board: At origin position
+        Board->>Electromagnet: activate()
+        Board->>Motors: move_to_destination()
+        Motors-->>Board: At destination
+        Board->>Electromagnet: deactivate()
         Board->>Engine: update_game_state()
-        Engine->>Board: black_player_movement()
+        
+        alt Computer's Turn
+            Engine->>Board: black_player_movement()
+            Board->>Motors: move_trolley()
+            Motors-->>Board: Position reached
+            Board->>Electromagnet: activate()
+            Board->>Motors: execute_move()
+            Motors-->>Board: Move complete
+            Board->>Electromagnet: deactivate()
+        end
     else Invalid Move
         Board->>Player: Display error
     end
