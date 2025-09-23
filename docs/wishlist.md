@@ -13,14 +13,14 @@
    - [ ] Add position feedback sensors
 
 3. **Electromagnet**
-   - [-] Variable power control for different piece weights
-   - [-] Improved piece release mechanism
+   - [x] Variable power control for different piece weights
+   - [x] Improved piece release mechanism
    - [ ] Feedback system for successful piece grip
 
 ## Software Improvements
 1. **Chess Engine**
    - [ ] Multiple difficulty levels
-   - [-] Opening book implementation
+   - [x] Opening book implementation
    - [ ] Game analysis features
    - [ ] FEN export capability
 
@@ -31,7 +31,7 @@
 
 3. **Game Features**
    - [ ] Save/load game states
-   - [-] Tournament mode
+   - [x] Tournament mode
    - [ ] Training exercises
    - [ ] Move suggestions
 
